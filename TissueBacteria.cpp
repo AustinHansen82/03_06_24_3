@@ -3,7 +3,7 @@
 //  Myxobacteria
 //
 //  Created by Alireza Ramezani on 10/8/20.
-//  Copyright © 2020 Alireza Ramezani and Austin Hansen. All rights reserved.
+//  Copyright © 2020 Alireza Ramezani. All rights reserved.
 //
 
 #include "TissueBacteria.hpp"
@@ -170,7 +170,6 @@ void TissueBacteria::Initialization ()
     }
     
 }
-/*
 //-----------------------------------------------------------------------------------------------------
 void TissueBacteria::Initialization2 ()
 {
@@ -215,40 +214,14 @@ void TissueBacteria::Initialization2 ()
     }
     
 }
-*/
-void TissueBacteria::Initialization2 ()
-{
-    double a ;
-    double b ;
-    double lx = (domainx * 0.6)/nbacteria ;
-    for (int i=0 , j=(nnode-1)/2 ; i<nbacteria; i++)
-    {
-        bacteria[i].nodes[j].x = domainx/2.0 ;
-        bacteria[i].nodes[j].y = domainy*0.2 + lx*i;
-        a= gasdev(&idum) ;
-        b=gasdev(&idum) ;
-        double norm = sqrt(a*a+b*b) ;
-        a = a/norm ;
-        b = b/norm ;
-        for (int n=1; n<=(nnode-1)/2; n++)
-        {
-           bacteria[i].nodes[j+n].x = bacteria[i].nodes[j+n-1].x + equilibriumLength * a ; // or nodes[j].x + n * equilibriumLength * a
-           bacteria[i].nodes[j-n].x = bacteria[i].nodes[j-n+1].x - equilibriumLength * a ;
-           bacteria[i].nodes[j+n].y = bacteria[i].nodes[j+n-1].y + equilibriumLength * b ;
-           bacteria[i].nodes[j-n].y = bacteria[i].nodes[j-n+1].y - equilibriumLength * b ;
-        }
-        j=(nnode-1)/2 ;
-    }
-}
-
 
 //-----------------------------------------------------------------------------------------------------
 void TissueBacteria::CircularInitialization ()
 {
     double raduis = 0.375 * sqrt(domainx * domainx  )/2.0 ;
     double deltaTetta = 2.0 * 3.1416 / nbacteria ;
-    double cntrX = domainx/2.0+2;
-    double cntrY = domainy/2.0+2;
+    double cntrX = domainx/2.0 + 2;
+    double cntrY = domainy/2.0 + 2;
     
     double a ;
     double b ;
@@ -258,7 +231,8 @@ void TissueBacteria::CircularInitialization ()
     {
         bacteria[i].nodes[j].x = cntrX + raduis * cos( static_cast<double>(i* deltaTetta) ) ;
         bacteria[i].nodes[j].y = cntrY + raduis * sin( static_cast<double>(i* deltaTetta) ) ;
-        
+        //bacteria[i].nodes[j].x = 2432;
+        //bacteria[i].nodes[j].y = 2419;
         /*
         //Parallel
         a = cos( static_cast<double>(i* deltaTetta) ) ;
@@ -266,17 +240,15 @@ void TissueBacteria::CircularInitialization ()
         double norm = sqrt(a*a+b*b) ;
         a = a/norm ;
         b = b/norm ;
-        */
         
-       /*
+        
         //Perpendicular
         a = -raduis * sin( static_cast<double>(i* deltaTetta) ) ;
         b = raduis * cos( static_cast<double>(i* deltaTetta) ) ;
         double norm = sqrt(a*a+b*b) ;
         a = a/norm ;
         b = b/norm ;
-       */
-   /*
+        
         // Print a and b when i is 12
         if (i == 12)
         {
@@ -287,7 +259,8 @@ void TissueBacteria::CircularInitialization ()
             std::cout << "y = " << bacteria[i].nodes[j].y << std::endl;
 
         }
-*/
+        */
+        
         
         //Random
         a = gasdev(&idum) ;
@@ -346,7 +319,7 @@ void TissueBacteria::SwarmingInitialization ()
 //-----------------------------------------------------------------------------------------------------
 void TissueBacteria::CenterInitialization()
 {
-    double raduis = 0.05 * sqrt(domainx * domainx  )/2.0 ;
+    double raduis = 0.2 * sqrt(domainx * domainx  )/2.0 ;
     double cntrX = domainx/2.0 ;
     double cntrY = domainy/2.0 ;
     
@@ -1396,18 +1369,18 @@ void TissueBacteria:: Reverse_IndividualBacteriaa (int i)
     if (bacteria[i].attachedToFungi == false || inLiquid == true)
     {
         
-        double random_number = unif_distribution(reversal_rng);
-        bacteria[i].turnAngle = (std::log((random_number-1.0017) / (-1.0017)))/ (-18.11);
+        //double random_number = unif_distribution(reversal_rng);
+        //bacteria[i].turnAngle = (std::log((random_number-1.0017) / (-1.0017)))/ (-18.11);
         
-        /*
+    
         //Reselects to Limit distribution
         double random_number;
         do {
             random_number = unif_distribution(reversal_rng);
             bacteria[i].turnAngle = (std::log((random_number-1.0017) / (-1.0017)))/ (-18.11);
         } while (bacteria[i].turnAngle > bacteria[i].maxTurnAngle);
-        */
-        
+     
+
         // Calculate a Random value which is either +1 or -1
         int Random_Multiplier = unif_int_distribution(multiplier_rng);
         int Random_Multiplier_Value = Random_Multiplier == 0 ? -1 : 1;
@@ -1484,7 +1457,6 @@ void TissueBacteria:: Check_Perform_AllReversing_andWrapping()
                   //  bacteria[i].wrapAngle = (2.0*(rand() / (RAND_MAX + 1.0))-1.0 ) * bacteria[i].maxWrapAngle ;
                   //  bacteria[i].wrapAngle = (2.0*(rand() / (RAND_MAX + 1.0))-1.0 ) * bacteria[i].maxTurnAngle ; // Used for Wrap Angle Calibration
                     bacteria[i].wrapAngle = 180 - (51.08*exp(-1.439*bacteria[i].maxRunDuration)+87.02);
-                    //bacteria[i].wrapAngle = bacteria[i].maxWrapAngle;
                     bacteria[i].wrapAngle = bacteria[i].wrapAngle/(398.67*bacteria[i].maxRunDuration);
                     //bacteria[i].wrapAngle = wrapAngle_distribution(wrapAngle_seed);
                     if ( rand() / (RAND_MAX + 1.0) < 0.5)
@@ -1554,7 +1526,6 @@ void TissueBacteria:: Check_Perform_AllReversing_andWrapping()
                   //  bacteria[i].wrapAngle = (2.0*(rand() / (RAND_MAX + 1.0))-1.0 ) * bacteria[i].maxWrapAngle ;
                   //  bacteria[i].wrapAngle = (2.0*(rand() / (RAND_MAX + 1.0))-1.0 ) * bacteria[i].maxTurnAngle ; // Used for Wrap Angle Calibration
                     bacteria[i].wrapAngle = 180 - (51.08*exp(-1.439*bacteria[i].maxRunDuration)+87.02);
-                    //bacteria[i].wrapAngle = bacteria[i].maxWrapAngle;
                     bacteria[i].wrapAngle = bacteria[i].wrapAngle/(398.67*bacteria[i].maxRunDuration);
                     //bacteria[i].wrapAngle = wrapAngle_distribution(wrapAngle_seed);
                     if ( rand() / (RAND_MAX + 1.0) < 0.5)
@@ -1576,7 +1547,7 @@ void TissueBacteria:: Check_Perform_AllReversing_andWrapping()
                     bacteria[i].motilityMetabolism.switchMode = false ;
                 }
             }
-            else if (( bacteria[i].wrapMode == true) && ((bacteria[i].motilityMetabolism.switchMode == true) || (bacteria[i].wrapTimer > bacteria[i].wrapPeriod)))
+            else if ( bacteria[i].wrapMode == true && bacteria[i].motilityMetabolism.switchMode == true)
             {
                 //WriteWrapDataByBacteria(i);
 
